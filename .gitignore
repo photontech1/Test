@@ -1,0 +1,213 @@
+<?php   
+error_reporting(0); 
+/* 
+Plugin Name: CSV Import
+
+Author: I-Genesys
+Version: 1.0 
+Author URI: http://www.i-genesys.com 
+*/  
+			
+register_activation_hook(__FILE__,'ln1_plugin_install');
+
+function ln1_plugin_install() {
+    createa_tables();
+}	
+function createa_tables()
+{
+	global $wpdb;
+	$wpdb->prefix."wp_tv_scedule";
+	
+$wpdb->query('CREATE TABLE IF NOT EXISTS `wp_tv_scedule` (
+  `Id` int(255) NOT NULL AUTO_INCREMENT,
+  `Date` date NOT NULL,
+  `Time` time NOT NULL,
+  `Programme` varchar(300) NOT NULL,
+  `Title` varchar(100) NOT NULL,
+  `Synopsis` varchar(30000) NOT NULL,
+  `Certificate` varchar(100) NOT NULL,
+  `Genre` varchar(100) NOT NULL,
+  `SubGenre` varchar(100) NOT NULL,
+  PRIMARY KEY (`Id`)
+)ENGINE = MyISAM;');
+	
+}
+
+function view()
+{
+	include('view.php');
+}
+function addbooking() {  
+    include('tvschedule.php');  
+} 
+function csvmport()
+{
+	include('csvmport.php');
+}
+  	function add_project_action() 
+	
+{  
+   //add_menu_page("transaction", "CSV Import", 1, "transaction", "transaction");
+   //add_submenu_page("null", "view", "view", 0, "view", "view");
+   
+   add_menu_page("addbooking", "TV SCHEDULE", 1, "addbooking", "addbooking");
+   add_submenu_page("addbooking","CSV Import","CSV Import", 0,"csvmport","csvmport");
+   add_submenu_page("null", "view", "view", 0, "view", "view");
+    //add_submenu_page("addbooking","Order History","Order History", 0,"transaction","transaction");
+  
+}  
+  
+add_action('admin_menu', 'add_project_action'); 
+
+function TV_SCEDULE( ) {
+
+global $wpdb;
+	$table_name = $wpdb->prefix."wp_tv_scedule";
+	
+	 $delqry = "Delete from wp_tv_scedule where Time = '00:00:00.000000'";
+	$res = $wpdb->query($delqry);
+
+?>
+<style>
+ul.pagination1 li,
+ul.pagination2 li,
+ul.pagination3 li {
+    float:left; width:100%;
+	list-style:none;
+}
+
+
+ul.simplePagerNav li{
+    display:block;
+    float: left;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-family: georgia;
+	font-size:14px;
+}
+
+ul.simplePagerNav li a{
+    color: #333;
+    text-decoration: none;
+}
+
+li.currentPage {
+	background: red;
+    background: #FF9500;	
+}
+
+ul.simplePagerNav li.currentPage a {
+	color: #fff;	
+}
+
+table.pageme {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}  
+
+table.pageme td {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+.heading{
+     font-weight: bold;
+     display:table-row;
+     background-color:#FF9500;;
+     text-align: center;
+     line-height: 25px;
+     font-size: 14px;
+     font-family:georgia;
+     color:#fff;
+    
+}
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://www.jquery4u.com/demos/jquery-quick-pagination/js/jquery.quick.pagination.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("ul.pagination3").quickPagination({pagerLocation:"",pageSize:"20"});
+});
+</script>
+
+<table>
+<tr>
+
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo $seven = date("Ymd",strtotime($today . "-7 days")); ?>"><?php echo $one=date('D j',strtotime($today . "-7 days"));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo $six = date("Ymd",strtotime($today . "-6 days")); ?>"><?php echo $one=date('D j',strtotime($today . "-6 days"));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo $five = date("Ymd",strtotime($today . "-5 days")); ?>"><?php echo $one=date('D j',strtotime($today . "-5 days"));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo $four = date("Ymd",strtotime($today . "-4 days")); ?>"><?php echo $one=date('D j',strtotime($today . "-4 days"));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo $three = date("Ymd",strtotime($today . "-3 days")); ?>"><?php echo $one=date('D j',strtotime($today . "-3 days"));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo $two = date("Ymd",strtotime($today . "-2 days")); ?>"><?php echo $one=date('D j',strtotime($today . "-2 days"));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo $one = date("Ymd",strtotime($today . "-1 days")); ?>"><?php echo $one=date('D j',strtotime($today . "-1 days"));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo $today = date("Ymd"); ?>"><?php echo 'Today'.date("j"); ?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo  date('Ymd', strtotime("+1 days", strtotime($today)));?>"><?php echo  $tomorrow=date('D j',strtotime($today . "+1 days"));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo  date('Ymd', strtotime("+2 days", strtotime($today)));?>"><?php echo  date('D j', strtotime("+2 day", strtotime($today)));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo  date('Ymd', strtotime("+3 days", strtotime($today)));?>"><?php echo  date('D j', strtotime("+3 day", strtotime($today)));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo  date('Ymd', strtotime("+4 days", strtotime($today)));?>"><?php echo  date('D j', strtotime("+4 day", strtotime($today)));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo  date('Ymd', strtotime("+5 days", strtotime($today)));?>"><?php echo  date('D j', strtotime("+5 day", strtotime($today)));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo  date('Ymd', strtotime("+6 days", strtotime($today)));?>"><?php echo  date('D j', strtotime("+6 day", strtotime($today)));?></a>|</td>
+<td><a href="http://bonanzabonanza.co.uk/?p=20&&date=<?php echo  date('Ymd', strtotime("+7 days", strtotime($today)));?>"><?php echo  date('D j', strtotime("+7 day", strtotime($today)));?></a></td>
+
+</tr>
+</table>
+
+<table>
+<tr>
+  <th colspan="6" ><h3></h3></th>
+  </tr>
+  <tr class="heading">
+   <td>Date</td>
+    <td>Time</td>
+    <td>Programme</td>
+     <td>Title</td>
+     <td align="center" colspan="2">Detail</td>
+    </tr>
+  </table>
+ <?php
+
+ $eid = $_GET["date"];
+if($eid != "")
+{
+ 
+  $today_event = date("Ymd");
+	
+	$Details1 = $wpdb->get_results("Select * from  wp_tv_scedule where Time!= '00:00:00.000000' && Date='".$eid."'");
+	foreach($Details1 as $row1)
+	{		
+?>
+	<a href="http://bonanzabonanza.co.uk/?p=183&&event_id=<?php echo $row1->Id;?>"><div><table><tr class="divRow">
+    <td class="divCell"><?php echo $row1->Date; ?></td>
+    <td class="divCell"><?php echo $row1->Time; ?></td>
+     <td class="divCell"><?php echo $row1->Programme; ?></td>
+     <td class="divCell"><?php echo $row1->Title; ?></td>
+ </tr></table></div></a>
+    <?php
+	}
+} else{
+  
+   $today_event = date("Ymd");
+	
+	$Details1 = $wpdb->get_results("Select * from  wp_tv_scedule where Time!= '00:00:00.000000' && Date='".date("Ymd")."'");
+	foreach($Details1 as $row1)
+	{		
+?>
+	<a href="http://bonanzabonanza.co.uk/?p=183&&event_id=<?php echo $row1->Id;?>"><div><table><tr class="divRow">
+    <td class="divCell"><?php echo $row1->Date; ?></td>
+    <td class="divCell"><?php echo $row1->Time; ?></td>
+     <td class="divCell"><?php echo $row1->Programme; ?></td>
+     <td class="divCell"><?php echo $row1->Title; ?></td>
+ </tr></table></div></a>
+    <?php
+	}
+  }
+  
+  
+  ?>
+  
+
+
+ 
+<?php
+		}
+add_shortcode( 'TV_SCEDULE', 'TV_SCEDULE' );
